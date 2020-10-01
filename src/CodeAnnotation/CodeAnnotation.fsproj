@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <AssemblyName>Hawk.CodeAnnotation</AssemblyName>
+        <PackageId>Hawk.CodeAnnotation</PackageId>
+        <Authors>Oliver Hawk</Authors>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageIconUrl />
+        <PackageReleaseNotes>Initial Release</PackageReleaseNotes>
+        <Description>Takes source code of several programming languages as input and returns the source with annotations for its components. Regex based, Useful for syntax highlighting.</Description>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <DocumentationFile>Hawk.CodeAnnotation.xml</DocumentationFile>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageTags>syntax, highlighting, regex</PackageTags>
+        <Title>Code Annotation</Title>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <WarningLevel>4</WarningLevel>
+      <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="Types.fs" />
+        <Compile Include="Util.fs" />
+        <Compile Include="Tokens.fs" />
+        <Compile Include="Annotators\GenericAnnotator.fs" />
+        <Compile Include="Annotators\CSharpAnnotator.fs" />
+        <Compile Include="Annotators\FSharpAnnotator.fs" />
+        <Compile Include="Library.fs" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="icon.png">
+        <Pack>True</Pack>
+        <PackagePath />
+      </None>
+    </ItemGroup>
+
+</Project>
