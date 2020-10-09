@@ -1,5 +1,7 @@
 ﻿module internal CodeAnnotation.GenericAnnotator
 
+// TODO Error Handling (e.g. regex problems)
+
 open System.Text
 open System.Text.RegularExpressions
 
