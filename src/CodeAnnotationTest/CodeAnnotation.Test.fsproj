@@ -5,11 +5,14 @@
 
         <IsPackable>false</IsPackable>
         <GenerateProgramFile>false</GenerateProgramFile>
+        <AssemblyName>CodeAnnotation.Tests</AssemblyName>
+        <RootNamespace>CodeAnnotation.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
         <Compile Include="TestData\FSharpAnnotatorTestData.fs" />
         <Compile Include="TestData\CSharpAnnotatorTestData.fs" />
+        <Compile Include="Util\StringFuzz.fs" />
         <Compile Include="FSharpAnnotatorTests.fs" />
         <Compile Include="CSharpAnnotatorTests.fs" />
         <Compile Include="GenerateSearchPatternTests.fs" />
