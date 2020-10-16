@@ -14,6 +14,11 @@ type FSharpAnnotatorTests(_output:ITestOutputHelper) =
         // hint: check out project HtmlTestPrint for a visualization of the test source code used here
 
     [<Fact>]
+    member _.``Empty String Is Returned Unchanged`` () =
+        Annotator.annotate (FSharp "")
+        |> should equal ""
+
+    [<Fact>]
     member _.``Triple Quoted Strings Annotated`` () =
         let source = @""""""" - This is weird - """""""
         let expectedResult = @"{~String:"""""" - This is weird - """"""~}"
