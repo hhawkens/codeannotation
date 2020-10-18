@@ -1,14 +1,12 @@
 ﻿module internal CodeAnnotation.GenericAnnotator
 
-// TODO Error Handling (e.g. regex problems)
-
 open System.Text
 open System.Text.RegularExpressions
 
 let private keywordLabel = CodeBuildingBlock.Keyword.ToString()
 
 let private buildAllWordsRegex patternsToExclude =
-    let appendPattern txt pattern = sprintf "%s|%s" txt pattern.Regex
+    let appendPattern txt pattern = sprintf "%s|%A" txt pattern.ValidRegex
     let anyWordSearchPattern = sprintf @"(?<%s>[#@!$&%%]*\w+)" keywordLabel
     patternsToExclude // usually comment and string patterns
     |> Seq.fold appendPattern anyWordSearchPattern
@@ -20,9 +18,9 @@ let private tokenFromMatch block (match': Match) =
     | group::_ -> Some {Start = group.Index; Len = group.Length; Block = block}
     | _ -> None
 
-let private tokensFromPatterns sourceCode (patterns: BuildingBlockPattern seq) =
+let private tokensFromPatterns sourceCode patterns =
     patterns
-    |> Seq.collect (fun p -> matchAndExtract (tokenFromMatch p.Block) sourceCode (p.Regex |> Regex))
+    |> Seq.collect (fun p -> matchAndExtract (tokenFromMatch p.Block) sourceCode p.ValidRegex)
 
 let private tryGetKeywordTokenFromMatch (keywords: Keywords) (match': Match) =
     let keywordGroups = match'.Groups |> Seq.filter (fun g -> g.Name = keywordLabel && g.Success) |> List.ofSeq
@@ -38,7 +36,7 @@ let private applyTokensToSource (sourceCode: SourceCodeRawText) (tokens: Token s
         annotatedCode.Replace(substring, replacement, token.Start, token.Len) |> ignore
     annotatedCode.ToString()
 
-let internal createAnnotator (patterns: BuildingBlockPattern seq) keywords =
+let internal createAnnotator patterns keywords =
     let patternsToExclude = patterns |> Seq.filter (fun p -> p.Block = Comment || p.Block = String)
     let allWordsRegex = buildAllWordsRegex patternsToExclude
     let annotate (sourceCode: SourceCodeRawText) =
@@ -48,3 +46,8 @@ let internal createAnnotator (patterns: BuildingBlockPattern seq) keywords =
         |> Tokens.sortAndFilterDescending
         |> applyTokensToSource sourceCode
     annotate
+
+let internal tryCreateAnnotator (patterns: BuildingBlockPattern seq) keywords =
+    match validatePatterns patterns with
+    | AnnotationErrors errors -> Error errors
+    | ValidPatterns validPatterns -> Ok (createAnnotator validPatterns keywords)

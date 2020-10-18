@@ -1,7 +1,5 @@
-namespace CodeAnnotation
-
 [<AutoOpen>]
-module internal Util =
+module internal CodeAnnotation.Util
 
     open System.Text.RegularExpressions
 
@@ -25,19 +23,16 @@ module internal Util =
         |> iterateMatch
         |> Seq.choose tryExtractFunc
 
-    let internal debug a =
-        printf "%A" a
-        a
+    let internal tryMakeRegex txt =
+        try Ok (Regex txt) with | _ -> Error (BadRegex txt)
 
-[<Struct>]
-type internal OptionalChoiceBuilder =
-    member _.ReturnFrom(x) = x
+    let internal validatePatterns (patterns: BuildingBlockPattern seq) =
+        let validPatterns, errors =
+            patterns |> Seq.fold (fun (validPatternsState, errorsState) pattern ->
+                match tryMakeRegex pattern.Regex with
+                | Ok regex -> {ValidRegex = regex; Block = pattern.Block}::validPatternsState, errorsState
+                | Error err -> validPatternsState, err::errorsState
+                ) ([],[])
+        if errors = [] then ValidPatterns validPatterns else AnnotationErrors errors
 
-    member _.Combine(a, b) = match a with | Some _ -> a | None -> b
-
-    member _.Delay(f) = f()
-
-[<AutoOpen>]
-module internal OptionalChoiceBuilder =
-
-    let internal chooseoptional = OptionalChoiceBuilder()
+    let internal debug a = printf "%A" a; a

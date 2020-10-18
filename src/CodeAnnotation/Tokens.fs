@@ -1,4 +1,4 @@
-module CodeAnnotation.Tokens
+module internal CodeAnnotation.Tokens
 
 let private buildingBlocksPriority = // lower number means higher priority
     Map.ofArray [|(Comment, 0uy); (String, 1uy); (Keyword, 2uy)|]
@@ -8,7 +8,7 @@ let private overlaps t1 t2 =
         if t1.Start <= t2.Start then struct(t1, t2) else struct(t2, t1)
     tFst.Start + tFst.Len > tSnd.Start
 
-let private tryPrioritizeByBuildingBlock t1 t2 =
+let private tryPrioritizeByBuildingBlock (t1: Token) (t2: Token) =
     let findPriority x =
         match buildingBlocksPriority |> Map.tryFind x with | Some s -> s | None -> 255uy
     let struct(prio1, prio2) = struct(findPriority t1.Block, findPriority t2.Block)

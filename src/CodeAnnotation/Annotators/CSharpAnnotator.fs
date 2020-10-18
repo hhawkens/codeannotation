@@ -1,5 +1,7 @@
 module internal CodeAnnotation.CSharpAnnotator
 
+open System.Text.RegularExpressions
+
 let private keywords =
     [|"abstract";"add";"as";"alias";"ascending";"async";"await";"base";"bool";"break";"by";"byte";
       "case";"catch";"char";"checked";"class";"const";"continue";"decimal";"default";"descending";"delegate";"do";
@@ -34,6 +36,9 @@ let private patterns = [|
     {Block = Constant; Regex = @"const\s+\w+\s+(\w+)"} // Constant
 |]
 
-let private annotateCSharp = GenericAnnotator.createAnnotator patterns keywords
+let private annotateCSharp =
+    GenericAnnotator.createAnnotator
+        (patterns |> Seq.map (fun p -> {ValidRegex = Regex(p.Regex); Block = p.Block}))
+        keywords
 
 let internal annotate sourceCode = annotateCSharp sourceCode

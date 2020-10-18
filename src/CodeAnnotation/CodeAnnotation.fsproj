@@ -23,6 +23,7 @@
 
     <ItemGroup>
         <Compile Include="Types.fs" />
+        <Compile Include="Workflows.fs" />
         <Compile Include="Util.fs" />
         <Compile Include="Tokens.fs" />
         <Compile Include="Annotators\GenericAnnotator.fs" />

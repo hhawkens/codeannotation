@@ -17,6 +17,7 @@
         <Compile Include="FSharpAnnotatorTests.fs" />
         <Compile Include="CSharpAnnotatorTests.fs" />
         <Compile Include="GenerateSearchPatternTests.fs" />
+        <Compile Include="CustomAnnotatorTests.fs" />
         <Compile Include="Program.fs" />
     </ItemGroup>
 

@@ -1,5 +1,7 @@
 module internal CodeAnnotation.FSharpAnnotator
 
+open System.Text.RegularExpressions
+
 let private keywords =
     [|"abstract";"and";"as";"assert";"base";"begin";"class";"default";"delegate";"do";"done";"downcast";
       "downto";"elif";"else";"end";"exception";"extern";"false";"finally";"fixed";"for";"fun";"function";
@@ -28,6 +30,9 @@ let private patterns = [|
     {Block = Function; Regex = @"\B(\|>|<\|)\B"} // Pipe operator
 |]
 
-let private annotationFunction = GenericAnnotator.createAnnotator patterns keywords
+let private annotationFunction =
+    GenericAnnotator.createAnnotator
+        (patterns |> Seq.map (fun p -> {ValidRegex = Regex(p.Regex); Block = p.Block}))
+        keywords
 
 let internal annotate sourceCode = annotationFunction sourceCode
