@@ -13,7 +13,11 @@ let private buildAllWordsRegex patternsToExclude =
     |> Regex
 
 let private tokenFromMatch block (match': Match) =
-    let groups = match'.Groups |> Seq.skip 1 |> Seq.filter (fun g -> g.Success) |> List.ofSeq
+    let groups =
+        match'.Groups
+        |> Seq.skip 1
+        |> Seq.filter (fun g -> g.Success)
+        |> List.ofSeq
     match groups with
     | group::_ -> Some {Start = group.Index; Len = group.Length; Block = block}
     | _ -> None
@@ -23,7 +27,10 @@ let private tokensFromPatterns sourceCode patterns =
     |> Seq.collect (fun p -> matchAndExtract (tokenFromMatch p.Block) sourceCode p.ValidRegex)
 
 let private tryGetKeywordTokenFromMatch (keywords: Keywords) (match': Match) =
-    let keywordGroups = match'.Groups |> Seq.filter (fun g -> g.Name = keywordLabel && g.Success) |> List.ofSeq
+    let keywordGroups =
+        match'.Groups
+        |> Seq.filter (fun g -> g.Name = keywordLabel && g.Success)
+        |> List.ofSeq
     match keywordGroups with
     | group::[] when keywords.Contains group.Value -> Some {Start = group.Index; Len = group.Length; Block = Keyword}
     | _ -> None
